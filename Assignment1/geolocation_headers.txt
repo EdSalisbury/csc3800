@@ -1,0 +1,65 @@
+GeoLocation SOAP API Headers
+CSCI 3800 - Web API Technologies
+2015/02/09
+Ed Salisbury
+
+Request:
+--------
+Accept-Encoding: gzip,deflate
+Tells the server which kind of compression we accept
+
+Content-Type: text/xml;charset=UTF-8
+The MIME type of this content and the character set it's encoded with
+
+SOAPAction: "http://www.webservicex.net/GetGeoIP"
+The SOAPAction HTTP request header field can be used to indicate the intent of the
+SOAP HTTP request. The value is a URI identifying the intent. SOAP places no restrictions
+on the format or specificity of the URI or that it is resolvable. An HTTP client MUST use
+this header field when issuing a SOAP HTTP Request.
+
+Host: www.webservicex.net
+The domain name of the server
+
+Content-Length: 317
+The length of the content that is sent.
+
+Connection: Keep-Alive
+Control options for the current connection and list of hop-by-hop request fields.
+Keep-alive means that we don't want the connection to get torn down after every request
+
+User-Agent: Apache-HttpClient/4.1.1 (java 1.5)
+User agent string - tells the server what our client software is reporting itself as.
+
+Response:
+---------
+Cache-Control: private, max-age=0
+Tells all caching mechanisms from server to client whether they may cache this object. It is measured in seconds.
+private: Indicates that all or part of the response message is intended for a single user and MUST NOT be cached by a shared cache, such as a proxy server.
+max-age=0: used to specify (in seconds) the maximum age of the content before it becomes stale
+
+Content-Type: text/xml; charset=utf-8
+The MIME type of this content and the character set it's encoded with
+
+Content-Encoding: gzip
+Specifies how the response is encoded
+
+Vary: Accept-Encoding
+Tells downstream proxies how to match future request headers to decide whether
+the cached response can be used rather than requesting a fresh one from the origin server.
+Accept-Encoding tells the browser that two cacheable responses of the same resource will be the
+same even if the Accept-Encoding request header is different.
+
+Server: Microsoft-IIS/7.0
+The server software that provided the response
+
+X-AspNet-Version: 4.0.30319
+Version of ASP.Net the server is running
+
+X-Powered-By: ASP.NET
+Tells the user that the server is running ASP.Net
+
+Date: Mon, 09 Feb 2015 19:18:53 GMT
+The date and time that the message was sent
+
+Content-Length: 403
+The length of the content

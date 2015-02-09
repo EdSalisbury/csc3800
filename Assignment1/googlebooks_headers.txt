@@ -1,0 +1,67 @@
+Google Books API Headers
+CSCI 3800 - Web API Technologies
+2015/02/09
+Ed Salisbury
+
+
+Request:
+--------
+Accept-Encoding: gzip,deflate
+Tells the server which kind of compression we accept
+
+Host: www.googleapis.com
+The domain name of the server
+
+Connection: Keep-Alive
+Control options for the current connection and list of hop-by-hop request fields.
+Keep-alive means that we don't want the connection to get torn down after every request
+
+User-Agent: Apache-HttpClient/4.1.1 (java 1.5)
+User agent string - tells the server what our client software is reporting itself as.
+
+Response:
+---------
+Expires: Mon, 09 Feb 2015 19:18:10 GMT
+Gives the date/time after which the response is considered stale
+
+Date: Mon, 09 Feb 2015 19:18:10 GMT
+The date and time that the message was sent
+
+Cache-Control: private, max-age=0, must-revalidate, no-transform
+Tells all caching mechanisms from server to client whether they may cache this object. It is measured in seconds.
+private: Indicates that all or part of the response message is intended for a single user and MUST NOT be cached by a shared cache, such as a proxy server.
+max-age=0: used to specify (in seconds) the maximum age of the content before it becomes stale
+must-revalidate: When the must-revalidate directive is present in a response received by a cache, that cache MUST NOT
+use the entry after it becomes stale to respond to a subsequent request without first revalidating it with the origin server
+no-transform:  When set, proxies and transcoders are instructed not to change the HTTP header and the content should not be modified
+
+ETag: "_rmWcTkH-s1QFjg9mC3Xel0FZSQ/G4IZfGpmPxb2EqBd2RDuT3wtmBA"
+An identifier for a specific version of a resource, often a message digest
+
+Vary: Origin
+Vary: X-Origin
+Tells downstream proxies how to match future request headers to decide whether
+the cached response can be used rather than requesting a fresh one from the origin server.
+
+Content-Type: application/json; charset=UTF-8
+The MIME type of this content and the character set it's encoded with
+
+X-Content-Type-Options: nosniff
+The only defined value, "nosniff", prevents Internet Explorer from MIME-sniffing a
+response away from the declared content-type. This also applies to Google Chrome, when downloading extensions
+
+X-Frame-Options: SAMEORIGIN
+Clickjacking protection: deny - no rendering within a frame, sameorigin - no rendering if
+origin mismatch, allow-from - allow from specified location, allowall - non-standard, allow from any location
+
+X-XSS-Protection: 1; mode=block
+Cross-site scripting (XSS) filter
+
+Content-Length: 28526
+The length of the content
+
+Server: GSE
+The server type that is responding with the content.
+
+Alternate-Protocol: 443:quic,p=0.02
+Google's protocol experimentation -- see http://blog.chromium.org/2013/06/experimenting-with-quic.html
