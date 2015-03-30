@@ -1,0 +1,125 @@
+# CSC3800 Web API
+# Assignment #3
+# 2015/03/30 Ed Salisbury
+
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: Github User Info
+# during dev, should point to your local machine
+host: localhost
+# basePath prefixes all resource paths
+basePath: /
+#
+schemes:
+  # tip: remove http to make production-grade
+  - http
+  - https
+# format of bodies a client can send (Content-Type)
+consumes:
+  - application/json
+  - application/x-www-form-urlencoded
+# format of the responses to the client (Accepts)
+produces:
+  - application/json
+x-a127-config:
+  myRemoteProxy.key: &apigeeProxyKey CONFIGURED
+  myRemoteProxy.uri: &apigeeProxyUri CONFIGURED
+x-a127-services:
+  oauth2:
+    provider: volos-oauth-apigee
+    options:
+      tokenLifetime: 300000
+      key: *apigeeProxyKey
+      uri: *apigeeProxyUri
+      #cache: mycache (See Oauth options section below.)
+      validGrantTypes:
+        - client_credentials
+        - authorization_code
+        - implicit_grant
+        - password
+      tokenPaths:  # These will be added to your paths section for you
+        authorize: /authorize
+        token: /accesstoken
+        invalidate: /invalidate
+        refresh: /refresh
+  basic:
+      provider: volos-oauth-apigee
+      options:
+        key: *apigeeProxyKey
+        uri: *apigeeProxyUri
+        passwordCheck:
+          helper: volos
+          function: passwordCheck
+
+paths:
+  /oauth:
+    x-swagger-router-controller: github
+    x-a127-authorizations:
+        oauth2: {}
+    x-a127-apply: {}
+    get:
+      description: Returns github user info using OAuth
+      operationId: github
+      security:
+        - oauth2: []
+      parameters:
+        - name: user
+          in: query
+          description: The name of the user to get github info for
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/UserResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /basic:
+    x-swagger-router-controller: github
+    x-a127-apply: {}
+    get:
+      description: Returns github user info using Basic Auth
+      operationId: github
+      security:
+        - basic: []
+      parameters:
+        - name: user
+          in: query
+          description: The name of the user to get github info for
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/UserResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+definitions:
+  UserResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
+  ErrorResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
+securityDefinitions:
+  oauth2:
+    type: oauth2
+    scopes:
+      read: "allow read"
+    flow: application
+    tokenUrl: ignored
+  basic:
+    type: basic

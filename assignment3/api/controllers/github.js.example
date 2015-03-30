@@ -1,0 +1,30 @@
+// CSC3800 Web API
+// Assignment #3
+// 2015/03/30 Ed Salisbury
+
+'use strict';
+
+module.exports = {
+  github: github
+};
+
+function github(req, res) {
+    var GitHubApi = require("github");
+
+    var github = new GitHubApi({
+        version: "3.0.0"
+    });
+
+    var user = req.swagger.params.user.value;
+
+    var token = "<YOUR TOKEN HERE>";
+
+    github.authenticate({
+        type: "oauth",
+        token: token
+    });
+
+    github.user.getFrom({user: user}, function(err, resp) {
+        res.json(resp);
+    });
+}
