@@ -21,7 +21,8 @@
     "volos-quota-redis": "",
     "volos-spikearrest-memory": "",
     "volos-oauth-redis": "",
-    "volos-oauth-apigee": ""
+    "volos-oauth-apigee": "",
+    "github": "0.2.3"
   },
   "devDependencies": {
     "should": "4.4.x",

@@ -2,6 +2,7 @@
 
 var a127 = require('a127-magic');
 var express = require('express');
+var github = require('github');
 var app = express();
 
 module.exports = app; // for testing
