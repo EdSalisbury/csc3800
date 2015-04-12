@@ -28,20 +28,31 @@ router.use(function(req, res, next) {
     next();
 });
 
-// /gets
 router.route('/movies')
 .get(function(req, res) {
     var options = {
         method:'GET',
-        endpoint:'movies'
+        endpoint:'movies',
+        limit: 999
     };
 
-    client.request(options, function (err, data) {
-        if (err) {
-            res.json({result: 'Error getting movies'});
+    client.request(options, function (err, data)
+    {
+        if (err)
+        {
+            res.status(404);
         }
-        else {
-            res.json({result: data});
+        else
+        {
+            var movies = []
+            for (var index in data['entities'])
+            {
+                item = data['entities'][index]
+                movie = {'title': item['title'], 'year': item['year'],
+                         'actors': item['actors']}
+                movies.push(movie)
+            }
+            res.json({count: movies.length, result: movies});
         }
     });
 })
