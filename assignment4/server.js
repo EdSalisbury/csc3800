@@ -28,6 +28,7 @@ router.use(function(req, res, next) {
     next();
 });
 
+// List
 router.route('/movies')
 .get(function(req, res) {
     var options = {
@@ -64,38 +65,61 @@ router.route('/movies')
         endpoint:'movies'
     };
 
-    client.createEntity(options, function (err, movie) {
+    client.createEntity(options, function (err, movie)
+    {
         if (err)
         {
-            res.status(500).json({result: 'Unable to create movie'})
+            res.status(500).json({message: 'Unable to create movie'})
         }
         else
         {
-            var data = {
-                title: req.body.title,
-                year: '',
-                actor1: '',
-                actor2: '',
-                actor3: ''
+            actors = []
+            if ('actors' in req.body)
+                actors = req.body.actors.split(',')
+            for (item in actors)
+                actors[item] = {'name': actors[item].trim()}
+
+            if (!('title' in req.body) || req.body.title == '')
+            {
+                res.status(400).json({message: "Missing title field"})
             }
-
-            movie.set(data);
-
-            movie.save(function(err){
-                if (err)
-                {
-                    res.status(500).json({result: 'Unable to create movie'});
+            else if (!('year' in req.body) || req.body.year == '')
+            {
+                res.status(400).json({message: "Missing year field"})
+            }
+            else if (actors.length < 1)
+            {
+                res.status(400).json({message: "Missing actors"})
+            }
+            else
+            {
+                var data = {
+                    title: req.body.title,
+                    year: req.body.year,
+                    actors: actors,
                 }
-                else
+
+                movie.set(data);
+
+                movie.save(function(err)
                 {
-                    res.status(201).json({result: 'Movie created'});
-                }
-            });
+                    if (err)
+                    {
+                        res.status(500).json({message: 'Unable to create movie'});
+                    }
+                    else
+                    {
+                        var url = req.protocol + '://' + req.get('host');
+                        url = url + movie['_data']['metadata']['path']
+                        res.status(201).json({message: 'Movie created', url: url});
+                    }
+                });
+            }
         }
     });
 });
 
-// /posts
+// View
 router.route('/movies/:uuid')
 .get(function(req, res) {
     var options = {
@@ -108,7 +132,7 @@ router.route('/movies/:uuid')
     {
         if (err)
         {
-            res.status(404);
+            res.status(404).json({message: 'Unable to find movie'});
         }
         else
         {
@@ -116,7 +140,7 @@ router.route('/movies/:uuid')
             var item = data['_data']
             movie = {'title': item['title'], 'year': item['year'],
                      'actors': item['actors'], 'url': url + item['metadata']['path']}
-            res.json({result: movie});
+            res.status(200).json({result: movie});
         }
     });
 })
@@ -137,7 +161,7 @@ router.route('/movies/:uuid')
             movie.destroy(function(err) {
                 if (err)
                 {
-                    res.status(500).json({'message': err})
+                    res.status(500).json({message: err})
                 }
                 else
                 {
@@ -147,35 +171,6 @@ router.route('/movies/:uuid')
         }
     })
 });
-
-
-
-// // /posts
-// router.route('/posts')
-// .post(function(req, res) {
-//     res.json({message: 'POST request accepted', query: req.query});
-// })
-// .all(function(req, res) {
-//     res.status(405).json({message: 'Unsupported HTTP method'});
-// });
-
-// // /puts
-// router.route('/puts')
-// .put(function(req, res) {
-//     res.json({message: 'PUT request accepted', query: req.query});
-// })
-// .all(function(req, res) {
-//     res.status(405).json({message: 'Unsupported HTTP method'});
-// });
-
-// // /deletes
-// router.route('/deletes')
-// .delete(function(req, res) {
-//     res.json({message: 'DELETE request accepted', query: req.query});
-// })
-// .all(function(req, res) {
-//     res.status(405).json({message: 'Unsupported HTTP method'});
-// });
 
 // Register the routes
 app.use('/', router);
