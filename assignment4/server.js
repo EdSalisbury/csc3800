@@ -45,11 +45,12 @@ router.route('/movies')
         else
         {
             var movies = []
+            var url = req.protocol + '://' + req.get('host');
             for (var index in data['entities'])
             {
                 item = data['entities'][index]
                 movie = {'title': item['title'], 'year': item['year'],
-                         'actors': item['actors']}
+                         'actors': item['actors'], 'url': url + item['metadata']['path']}
                 movies.push(movie)
             }
             res.json({count: movies.length, result: movies});
@@ -103,13 +104,19 @@ router.route('/movies/:uuid')
         uuid: req.params.uuid
     };
 
-    client.getEntity(options, function (err, data) {
-        if (err) {
-            res.json({result: 'Error getting movie'});
+    client.getEntity(options, function (err, data)
+    {
+        if (err)
+        {
+            res.status(404);
         }
         else
         {
-            res.json(data);
+            var url = req.protocol + '://' + req.get('host');
+            var item = data['_data']
+            movie = {'title': item['title'], 'year': item['year'],
+                     'actors': item['actors'], 'url': url + item['metadata']['path']}
+            res.json({result: movie});
         }
     });
 })
