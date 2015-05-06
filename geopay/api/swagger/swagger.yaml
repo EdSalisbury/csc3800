@@ -1,0 +1,172 @@
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: GeoPay
+# during dev, should point to your local machine
+host: localhost
+# basePath prefixes all resource paths
+basePath: /v1
+#
+schemes:
+  # tip: remove http to make production-grade
+  - http
+  - https
+# format of bodies a client can send (Content-Type)
+consumes:
+  - application/json
+# format of the responses to the client (Accepts)
+produces:
+  - application/json
+x-a127-config: {}
+x-a127-services: {}
+paths:
+  /payment:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: payment
+    x-a127-apply: {}
+    post:
+      description: Receives payment information
+      operationId: payment
+      parameters:
+        - name: details
+          description: "Payment details"
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/details'
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/Response"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+# complex objects have schema definitions
+definitions:
+  merchant:
+    required:
+      - NetworkRouting
+      - LaneNumber
+      - MerchantID
+      - City
+      - State
+    properties:
+      NetworkRouting:
+        type: string
+      LaneNumber:
+        type: string
+      MerchantID:
+        type: string
+      City:
+        type: string
+      State:
+        type: string
+  terminal:
+    required:
+      - TerminalID
+      - EntryMode
+      - TerminalEnvironmentCode
+      - DeviceType
+      - CardInputCode
+    properties:
+      TerminalID:
+        type: string
+      EntryMode:
+        type: string
+      TerminalEnvironmentCode:
+        type: string
+      DeviceType:
+        type: string
+      CardInputCode:
+        type: string
+  address:
+    required:
+      - BillingAddress1
+      - BillingAddressState
+      - BillingAddressCity
+      - BillingZipcode
+    properties:
+      BillingAddress1:
+        type: string
+      BillingAddressState:
+        type: string
+      BillingAddressCity:
+        type: string
+      BillingZipcode:
+        type: string
+  transaction:
+    required:
+      - SystemTraceID
+      - TransactionID
+      - PaymentType
+      - ReferenceNumber
+      - DraftLocatorID
+      - ClerkNumber
+      - MarketCode
+      - TransactionTimestamp
+      - TransactionAmount
+    properties:
+      SystemTraceID:
+        type: string
+      TransactionID:
+        type: string
+      PaymentType:
+        type: string
+      ReferenceNumber:
+        type: string
+      DraftLocatorID:
+        type: string
+      ClerkNumber:
+        type: string
+      MarketCode:
+        type: string
+      TransactionTimestamp:
+        type: string
+      TransactionAmount:
+        type: string
+  card:
+    required:
+      - CardType
+      - CVV
+      - CardNumber
+      - ExpirationMonth
+      - ExpirationYear
+    properties:
+      CardType:
+        type: string
+      CVV:
+        type: string
+      CardNumber:
+        type: string
+      ExpirationMonth:
+        type: string
+      ExpirationYear:
+        type: string
+  details:
+    properties:
+      merchant:
+        $ref: '#/definitions/merchant'
+      terminal:
+        $ref: '#/definitions/terminal'
+      address:
+        $ref: '#/definitions/card'
+      transaction:
+        $ref: '#/definitions/transaction'
+      address:
+        $ref: '#/definitions/address'
+  Response:
+    required:
+      - message
+    properties:
+      message:
+        type: string
+  ErrorResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
