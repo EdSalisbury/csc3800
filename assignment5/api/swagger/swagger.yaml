@@ -1,0 +1,116 @@
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: Movie Database App
+# during dev, should point to your local machine
+host: localhost
+# basePath prefixes all resource paths
+basePath: /v1
+#
+schemes:
+  # tip: remove http to make production-grade
+  - http
+  - https
+# format of bodies a client can send (Content-Type)
+consumes:
+  - application/json
+  - application/x-www-form-urlencoded
+# format of the responses to the client (Accepts)
+produces:
+  - application/json
+x-a127-config: {}
+x-a127-services: {}
+paths:
+  /movies:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: movies
+    x-a127-apply: {}
+    get:
+      description: Returns list of movies
+      operationId: movieListView
+      parameters:
+        - name: uuid
+          in: query
+          description: The UUID of the movie to return
+          required: false
+          type: string
+        - name: reviews
+          in: query
+          description: Whether or not to return reviews
+          required: false
+          type: boolean
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/SuccessResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    post:
+      description: Creates a new movie
+      operationId: movieCreate
+      parameters:
+        - name: title
+          type: string
+          in: formData
+          description: Movie title
+          required: true
+        - name: year
+          type: string
+          in: formData
+          description: Release year
+          required: true
+        - name: actors
+          type: string
+          in: formData
+          description: List of actors (comma separated)
+          required: true
+      responses:
+        "201":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/SuccessResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    delete:
+      description: Deletes a movie
+      operationId: movieDelete
+      parameters:
+        - name: uuid
+          in: query
+          description: The UUID of the movie to delete
+          required: false
+          type: string
+      responses:
+        "204":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/SuccessResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+definitions:
+  SuccessResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
+  ErrorResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
